@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public class BrokeredCommand : IBrokeredCommand
+    public class BrokeredCommand : IBrokeredCommandResult
     {
-        public BrokeredCommand(ICommandBroker broker, ICommandContext context, ICommand? command, ICommandExecutionResult? executionResult) 
+        public BrokeredCommand(ICommandBroker broker, IBrokeredCommandContext context, Bam.IBrokeredCommand? command, IBrokeredCommandRunResult? executionResult) 
         {
             this.Broker = broker;
             this.Context = context;
             this.Command = command;
-            this.ExecutionResult = executionResult;
+            this.RunResult = executionResult;
         }
 
-        static IBrokeredCommand _empty;
+        static IBrokeredCommandResult _empty;
         static object _emptyLock = new object();
-        public static IBrokeredCommand Empty
+        public static IBrokeredCommandResult Empty
         {
             get
             {
@@ -33,13 +33,13 @@ namespace Bam.Command
             set;
         }
 
-        public ICommandContext Context
+        public IBrokeredCommandContext Context
         {
             get;
             set;
         }
 
-        public ICommand? Command
+        public Bam.IBrokeredCommand? Command
         {
             get;
             set;
@@ -49,11 +49,11 @@ namespace Bam.Command
         {
             get
             {
-                return ExecutionResult?.Success == true;
+                return RunResult?.Success == true;
             }
         }
 
-        public ICommandExecutionResult? ExecutionResult
+        public IBrokeredCommandRunResult? RunResult
         {
             get;
             set;

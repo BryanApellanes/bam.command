@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Bam
 {
-    public interface ICommandContext
+    public interface IBrokeredCommandContext
     {
+        IBrokeredCommandRunner CommandRunner { get; }
         string ContextName { get; }
-        IDictionary<string, ICommand> Commands { get; }
+        IDictionary<string, IBrokeredCommand> Commands { get; }
         string ResolveCommandSelector(string[] arguments);
-        IBrokeredCommand Execute(string[] arguments);
+        IBrokeredCommandResult Execute(string[] arguments);
     }
 }

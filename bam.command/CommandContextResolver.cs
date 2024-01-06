@@ -7,9 +7,13 @@ using System.Threading.Tasks;
 
 namespace Bam
 {
-    public abstract class CommandContextResolver : ICommandContextResolver
+    public abstract class CommandContextResolver : IBrokeredCommandContextResolver
     {
-        public abstract IDictionary<string, ICommandContext> LoadContexts();
+        public CommandContextResolver()
+        {
+        }
+
+        public abstract IDictionary<string, IBrokeredCommandContext> LoadContexts();
 
         public string ResolveContextName(string[] arguments)
         {

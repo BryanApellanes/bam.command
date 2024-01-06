@@ -11,17 +11,14 @@ namespace Bam.Command
     {
         const string bamPrefix = "bam";
 
-        public ProcessCommandContextResolver()
+        public ProcessCommandContextResolver(ProcessCommandRunner commandRunner) : base()
         {
             this.FileFilter = this.IsValidCommand;
             this.SetDirectories();
+            this.CommandRunner = commandRunner;
         }
 
-        public ProcessCommandContextResolver(Func<string, bool> fileFilter) 
-        {
-            this.FileFilter = fileFilter;
-            this.SetDirectories();
-        }
+        protected ProcessCommandRunner CommandRunner { get; set; }
 
         /// <summary>
         /// Gets or sets the directories to search for executables in.
@@ -34,9 +31,9 @@ namespace Bam.Command
 
         public Func<string, bool> FileFilter { get; set; }
 
-        public override IDictionary<string, ICommandContext> LoadContexts()
+        public override IDictionary<string, IBrokeredCommandContext> LoadContexts()
         {
-            Dictionary<string, ICommandContext> commandContexts = new Dictionary<string, ICommandContext>();
+            Dictionary<string, IBrokeredCommandContext> commandContexts = new Dictionary<string, IBrokeredCommandContext>();
 
             foreach(DirectoryInfo directoryInfo in SearchDirectories)
             {
@@ -45,11 +42,11 @@ namespace Bam.Command
                     if (IsValidCommand(file.FullName))
                     {
                         string contextName = Path.GetFileNameWithoutExtension(file.Name);
-                        if(contextName.Length > 3 && contextName.ToLowerInvariant().StartsWith(bamPrefix))
+                        if(contextName.Length > bamPrefix.Length && contextName.ToLowerInvariant().StartsWith(bamPrefix))
                         {
                             contextName = contextName.TruncateFront(bamPrefix.Length);
                         }
-                        commandContexts.Add(contextName, new ProcessCommandContext(file));
+                        commandContexts.Add(contextName, new ProcessCommandContext(file, this.CommandRunner));
                     }
                 }
             }

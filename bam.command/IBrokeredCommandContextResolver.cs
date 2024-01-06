@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public interface ICommandContextResolver
+    public interface IBrokeredCommandContextResolver
     {
-        IDictionary<string, ICommandContext> LoadContexts();
+        IDictionary<string, IBrokeredCommandContext> LoadContexts();
         string ResolveContextName(string[] arguments);
     }
 }

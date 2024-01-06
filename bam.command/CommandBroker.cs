@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Bam.Net;
+using Bam.Net.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,23 +8,31 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public abstract class CommandBroker : ICommandBroker
+    public abstract class CommandBroker : Loggable, ICommandBroker
     {
-        public CommandBroker(ICommandContextResolver commandContextResolver)
+        public CommandBroker(IBrokeredCommandContextResolver commandContextResolver, ILogger? logger = null)
         {
             this.CommandContextResolver = commandContextResolver;
+            this.Logger = logger ?? Log.Default;
             this.Initialize();
         }
 
-        protected ICommandContextResolver CommandContextResolver { get; private set; }
+        protected IBrokeredCommandContextResolver CommandContextResolver { get; private set; }
 
-        public virtual IDictionary<string, ICommandContext> CommandContexts 
+        public virtual IDictionary<string, IBrokeredCommandContext> CommandContexts 
         {
             get; 
             private set; 
         }
 
+        public ILogger Logger
+        {
+            get;
+            private set;
+        }
+
         public event EventHandler<CommandBrokerEventArgs> InitializeStarted;
+
         public event EventHandler<CommandBrokerEventArgs> InitializeCompleted;
         public event EventHandler<CommandBrokerEventArgs> InitializeFailed;
         
@@ -34,7 +44,7 @@ namespace Bam.Command
         public event EventHandler<CommandBrokerEventArgs> BrokerCommandCompleted;
         public event EventHandler<CommandBrokerEventArgs> BrokerCommandFailed;
 
-        public IBrokeredCommand BrokerCommand(string[] arguments)
+        public IBrokeredCommandResult BrokerCommand(string[] arguments)
         {
             try
             {
@@ -44,10 +54,10 @@ namespace Bam.Command
                     Arguments = arguments
                 });
 
-                ICommandContext? commandContext = TryResolveContext(arguments);
+                IBrokeredCommandContext? commandContext = TryResolveContext(arguments);
                 if(commandContext != null)
                 {
-                    IBrokeredCommand command = commandContext.Execute(arguments);
+                    IBrokeredCommandResult command = commandContext.Execute(arguments);
 
                     if (command != null)
                     {
@@ -76,7 +86,7 @@ namespace Bam.Command
             }
         }
 
-        private ICommandContext? TryResolveContext(string[] arguments)
+        private IBrokeredCommandContext? TryResolveContext(string[] arguments)
         {
             try
             {
@@ -94,8 +104,10 @@ namespace Bam.Command
             return null;
         }
 
-        public virtual ICommandContext ResolveContext(string[] arguments)
+        public virtual IBrokeredCommandContext ResolveContext(string[] arguments)
         {
+            Info("Resolving context: arguments='{0}'", string.Join(" ", arguments));
+
             ResolveContextStarted?.Invoke(this, new CommandBrokerEventArgs()
             {
                 CommandBroker = this,
@@ -103,15 +115,17 @@ namespace Bam.Command
             });
 
             string contextName = CommandContextResolver.ResolveContextName(arguments);
-            if (contextName.Equals(DefaultCommandContext.Name) && CommandContext.Default != null)
+            if (contextName.Equals(DefaultCommandContext.Name) && BrokeredCommandContext.Default != null)
             {
-                CommandContext.Default.Broker = this;
-                return CommandContext.Default;
+                BrokeredCommandContext.Default.Broker = this;
+                return BrokeredCommandContext.Default;
             }
 
             if (CommandContexts.ContainsKey(contextName))
             {
-                ICommandContext context =  CommandContexts[contextName];
+                IBrokeredCommandContext context =  CommandContexts[contextName];
+                Info("Resolved context '{0}'", contextName);
+
                 ResolveContextCompleted?.Invoke(this, new CommandBrokerEventArgs()
                 {
                     CommandBroker = this,
@@ -128,6 +142,8 @@ namespace Bam.Command
         {
             try
             {
+                // TODO: review the best way to switch the logger subscription on and off for diagnostics
+                // this.Subscribe(this.Logger);
                 InitializeStarted?.Invoke(this, new CommandBrokerEventArgs()
                 {
                     CommandBroker = this
@@ -142,6 +158,7 @@ namespace Bam.Command
             }
             catch (Exception ex)
             {
+                Error("Failed to load contexts: {0}", ex.Message);
                 InitializeFailed?.Invoke(this, new CommandBrokerEventArgs()
                 {
                     CommandBroker = this,

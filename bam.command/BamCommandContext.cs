@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public class BamCommandContext : IBamCommandContext
+    public class BamCommandContext : BamContext, IBamBrokeredCommandContext
     {
         static BamCommandContext()
         {
@@ -20,7 +20,7 @@ namespace Bam.Command
 
         public BamCommandContext()
         {
-            this.ServiceRegistry = this.GetServiceRegistry();
+            this.ServiceRegistry = this.GetDefaultContextServiceRegistry();
         }
 
         public BamCommandContext(ServiceRegistry serviceRegistry)
@@ -30,12 +30,6 @@ namespace Bam.Command
 
         public static BamCommandContext Current { get; private set; }
 
-        
-        public void Configure(Action<ServiceRegistry> configure)
-        {
-            configure(this.ServiceRegistry);
-        }
-
         public ICommandBroker CommandBroker
         {
             get
@@ -44,58 +38,32 @@ namespace Bam.Command
             }
         }
 
-        public IApplicationNameProvider ApplicationNameProvider
-        {
-            get
-            {
-                return ServiceRegistry.Get<IApplicationNameProvider>();
-            }
-        }
-
-        public IConfigurationProvider ConfigurationProvider
-        {
-            get
-            {
-                return ServiceRegistry.Get<IConfigurationProvider>();
-            }
-        }
-
-        public ILogger Logger
-        {
-            get
-            {
-                return ServiceRegistry.Get<ILogger>();
-            }
-        }
-
-        public ServiceRegistry ServiceRegistry
-        {
-            get;
-            private set;
-        }
-
         public static async void Main(string[] args)
         {
             ICommandBroker broker = Current.ServiceRegistry.Get<ICommandBroker>();
-            IBrokeredCommand command = broker.BrokerCommand(args);
+            IBrokeredCommandResult command = broker.BrokerCommand(args);
             int exitCode = 0;
             if (!command.Success)
             {
-                Message.PrintLine(command.ExecutionResult.Message, ConsoleColor.Magenta);
+                Message.PrintLine(command.RunResult.Message, ConsoleColor.Magenta);
                 exitCode = 1;
             }
 
             BamConsoleContext.Exit(exitCode);
         }
 
-        protected ServiceRegistry GetServiceRegistry()
+        /// <summary>
+        /// Gets the default service registry for the current context.
+        /// </summary>
+        /// <returns></returns>
+        public override ServiceRegistry GetDefaultContextServiceRegistry()
         {
             return new ServiceRegistry()
                 .For<IApplicationNameProvider>().Use(new ProcessApplicationNameProvider())
                 .For<IConfigurationProvider>().Use(new DefaultConfigurationProvider())
                 .For<ILogger>().Use(new ConsoleLogger())
-                .For<ICommandContextResolver>().Use<ProcessCommandContextResolver>()
-                .For<IBamCommandContext>().Use(this);
+                .For<IBrokeredCommandContextResolver>().Use<ProcessCommandContextResolver>()
+                .For<IBamBrokeredCommandContext>().Use(this);
         }
     }
 }

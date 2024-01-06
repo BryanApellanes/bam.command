@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public interface ICommandInitializer
+    public interface ICommandArgumentParser
     {
-        IDictionary<string, ICommand> InitializeCommands();
+        IParsedCommandArguments ParseCommandArguments(string[] arguments);
     }
 }

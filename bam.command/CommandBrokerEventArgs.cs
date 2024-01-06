@@ -10,8 +10,8 @@ namespace Bam.Command
     {
         public string[] Arguments { get; set; }
         public ICommandBroker CommandBroker { get; set; }
-        public ICommandContext CommandContext { get; set; }
-        public IBrokeredCommand Command { get; set; }
+        public IBrokeredCommandContext CommandContext { get; set; }
+        public IBrokeredCommandResult Command { get; set; }
         public Exception Exception { get; set; }
     }
 }

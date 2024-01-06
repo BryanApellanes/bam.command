@@ -21,8 +21,9 @@ namespace Bam
         event EventHandler<CommandBrokerEventArgs> BrokerCommandCompleted;
         event EventHandler<CommandBrokerEventArgs> BrokerCommandFailed;
 
-        IDictionary<string, ICommandContext> CommandContexts { get; }
-        IBrokeredCommand BrokerCommand(string[] arguments);
-        ICommandContext ResolveContext(string[] arguments);
+        IDictionary<string, IBrokeredCommandContext> CommandContexts { get; }
+
+        IBrokeredCommandResult BrokerCommand(string[] arguments);
+        IBrokeredCommandContext ResolveContext(string[] arguments);
     }
 }

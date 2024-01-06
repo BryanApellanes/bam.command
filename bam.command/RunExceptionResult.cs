@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public class CommandExecutionExceptionResult : ICommandExecutionResult
+    public class RunExceptionResult : IBrokeredCommandRunResult
     {
-        public CommandExecutionExceptionResult(string commandName, Exception exception)
+        public RunExceptionResult(string commandName, Exception exception)
         {
             this.CommandName = commandName;
             this.Exception = exception;

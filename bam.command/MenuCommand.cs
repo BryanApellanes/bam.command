@@ -8,12 +8,17 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public class MenuCommand : ICommand
+    public class MenuCommand : IBrokeredCommand
     {
-        public MenuCommand(IMenuManager menuManager, IMenuItem menuItem)
+        public MenuCommand(IMenuItem menuItem)
         {
-            this.MenuManager = menuManager;
             this.MenuItem = menuItem;
+        }
+
+        public IMenuItem MenuItem
+        {
+            get;
+            private set;
         }
 
         public string CommandName
@@ -30,25 +35,6 @@ namespace Bam.Command
             {
                 return MenuItem.Selector;
             }
-        }
-
-        protected IMenuManager MenuManager
-        {
-            get;
-            private set;
-        }
-
-        protected IMenuItem MenuItem
-        {
-            get;
-            private set;
-        }
-
-        public ICommandExecutionResult? Execute(string[] arguments)
-        {
-            IMenuItemRunResult? runResult = MenuManager.RunMenuItem(MenuItem, MenuInput.FromArguments(arguments));
-
-            return new MenuCommandExecutionResult(runResult, this.MenuItem, arguments);
         }
     }
 }

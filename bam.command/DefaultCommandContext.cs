@@ -9,7 +9,7 @@ namespace Bam.Command
     public class DefaultCommandContext : MenuCommandContext
     {
         public const string Name = "DEFAULT";
-        public DefaultCommandContext() : base(Name)
+        public DefaultCommandContext(MenuCommandRunner commandRunner) : base(Name, commandRunner)
         {
         }
 

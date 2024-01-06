@@ -1,11 +1,15 @@
-﻿namespace Bam.Command
+﻿using Bam.Command;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Bam
 {
     public interface IBrokeredCommand
     {
-        ICommandBroker Broker { get; }
-        ICommandContext Context { get; }
-        ICommand Command { get; }
-        bool Success { get; }
-        ICommandExecutionResult ExecutionResult { get; }
+        string CommandName { get; }
+        string CommandSelector { get; }
     }
 }

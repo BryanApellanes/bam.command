@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public class MenuCommandExecutionResult : ICommandExecutionResult
+    public class MenuCommandRunResult : IBrokeredCommandRunResult
     {
-        public MenuCommandExecutionResult(IMenuItemRunResult? menuItemRunResult, IMenuItem menuItem, string[] arguments)
+        public MenuCommandRunResult(IMenuItemRunResult? menuItemRunResult, IMenuItem menuItem, string[] arguments)
         {
             this.MenuItemRunResult = menuItemRunResult;
             this.MenuItem = menuItem;

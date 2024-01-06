@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public class ProcessCommand : ICommand
+    public class ProcessCommand : IBrokeredCommand
     {
         public ProcessCommand(string name, string exePath) 
         {
@@ -21,12 +21,6 @@ namespace Bam.Command
 
         public string CommandSelector { get; private set; }
 
-        protected string ExePath { get; private set; }
-
-        public ICommandExecutionResult Execute(string[] arguments)
-        {
-            ProcessOutput processOutput = $"{this.ExePath} {string.Join(" ", arguments)}".Run();
-            return new ProcessCommandExecutionResult(processOutput);
-        }
+        public string ExePath { get; private set; }
     }
 }

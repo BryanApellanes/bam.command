@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public class ProcessCommandInitializer : ICommandInitializer
+    public class ProcessCommandInitializer : IBrokeredCommandInitializer
     {
-        public IDictionary<string, ICommand> InitializeCommands()
+        public IDictionary<string, Bam.IBrokeredCommand> InitializeCommands()
         {
             // look in BamDir/commands for executables
             

@@ -8,34 +8,70 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public class MenuCommandInitializer : ICommandInitializer
+    public class MenuCommandInitializer : IBrokeredCommandInitializer
     {
-        public MenuCommandInitializer() : this(BamConsoleContext.Current.MenuManager)
+        public MenuCommandInitializer() : this(BamConsoleContext.Current.MenuManager.CurrentMenu)
         {
         }
 
-        public MenuCommandInitializer(IMenuManager menuManager)
+        public MenuCommandInitializer(IMenu? menu)
         {
-            this.MenuManager = menuManager;
+            this.Menu = menu;
         }
 
-        public IMenuManager MenuManager 
+        public IMenu? Menu
         {
             get; 
             private set; 
         }
 
-        public IDictionary<string, ICommand> InitializeCommands()
+        public IDictionary<string, IBrokeredCommand> InitializeCommands()
         {
-            Dictionary<string, ICommand> results = new Dictionary<string, ICommand>();
-            if(MenuManager.CurrentMenu != null)
+            Dictionary<string, IBrokeredCommand> results = new Dictionary<string, IBrokeredCommand>();
+            if(Menu != null)
             {
-                foreach (IMenuItem menuItem in MenuManager.CurrentMenu.Items)
+                foreach (IMenuItem menuItem in Menu.Items)
                 {
-                    results.Add(menuItem.Selector, new MenuCommand(MenuManager, menuItem));
+                    MenuCommand menuCommand = new MenuCommand(menuItem);
+                    foreach(string commandName in GetCommandNames(menuItem))
+                    {
+                        if (!results.ContainsKey(commandName))
+                        {
+                            results.Add(commandName, menuCommand);
+                        }
+                    }
                 }
             }
             return results;
+        }
+
+        private IEnumerable<string> GetCommandNames(IMenuItem menuItem)
+        {
+            if(menuItem != null)
+            {
+                if (!string.IsNullOrEmpty(menuItem.DisplayName))
+                {
+                    yield return menuItem.DisplayName;
+                }
+
+                if (!string.IsNullOrEmpty(menuItem.Selector))
+                {
+                    yield return menuItem.Selector;
+                }
+
+                if(menuItem.Attribute != null)
+                {
+                    ConsoleCommandAttribute? attr = menuItem.Attribute as ConsoleCommandAttribute;
+                    if(attr != null)
+                    {
+                        if (!string.IsNullOrEmpty(attr.OptionName) && !menuItem.DisplayName.Equals(attr.OptionName))
+                        {
+                            yield return attr.OptionName;
+                        }
+                    }
+                }
+            }
+            yield break;
         }
     }
 }

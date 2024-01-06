@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Bam.Command
 {
-    public class ProcessCommandExecutionResult : ICommandExecutionResult
+    public class ProcessCommandExecutionResult : IBrokeredCommandRunResult
     {
         public ProcessCommandExecutionResult(ProcessOutput processOutput)
         {

@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Bam
 {
-    public interface ICommand
+    public interface IBrokeredCommandRunResult
     {
+        string Message { get; }
+        bool Success { get; }
+        object Result { get; }
         string CommandName { get; }
-        string CommandSelector { get; }
-        ICommandExecutionResult? Execute(string[] arguments);
+        string[] Arguments { get; }
     }
 }
