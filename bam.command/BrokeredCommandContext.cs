@@ -31,7 +31,7 @@ namespace Bam.Command
 
         protected IBrokeredCommandInitializer CommandInitializer { get; set; }
         
-        protected internal ICommandBroker Broker { get; set; }
+        //protected internal ICommandBroker Broker { get; set; }
 
         public IBrokeredCommandRunner CommandRunner { get; set; }
 
@@ -74,17 +74,17 @@ namespace Bam.Command
             return arguments[0];
         }
 
-        public virtual IBrokeredCommandResult Execute(string[] arguments)
+        public virtual IBrokeredCommandResult Execute(ICommandBroker broker, string[] arguments)
         {
             string commandName = ResolveCommandSelector(arguments);
             Bam.IBrokeredCommand? command = this.GetCommand(commandName);
             if (command != null)
             {
                 IBrokeredCommandRunResult? result = this.CommandRunner.Run(command, arguments);
-                return new BrokeredCommand(this.Broker, this, command, result);
+                return new BrokeredCommand(broker, this, command, result);
             }
 
-            return new BrokeredCommand(this.Broker, this, null, new RunExceptionResult(commandName, new ArgumentNullException(commandName)) { Arguments = arguments });
+            return new BrokeredCommand(broker, this, null, new RunExceptionResult(commandName, new ArgumentNullException(commandName)) { Arguments = arguments });
         }
 
         protected IBrokeredCommand? GetCommand(string commandName)

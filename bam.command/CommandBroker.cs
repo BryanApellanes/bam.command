@@ -57,7 +57,7 @@ namespace Bam.Command
                 IBrokeredCommandContext? commandContext = TryResolveContext(arguments);
                 if(commandContext != null)
                 {
-                    IBrokeredCommandResult command = commandContext.Execute(arguments);
+                    IBrokeredCommandResult command = commandContext.Execute(this, arguments);
 
                     if (command != null)
                     {
@@ -117,7 +117,6 @@ namespace Bam.Command
             string contextName = CommandContextResolver.ResolveContextName(arguments);
             if (contextName.Equals(DefaultCommandContext.Name) && BrokeredCommandContext.Default != null)
             {
-                BrokeredCommandContext.Default.Broker = this;
                 return BrokeredCommandContext.Default;
             }
 

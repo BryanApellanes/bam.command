@@ -59,7 +59,7 @@ namespace Bam.Command
             this.SearchDirectories = new DirectoryInfo[] { new DirectoryInfo(BamProfile.ToolkitPath) };
         }
 
-        protected bool IsValidCommand(string path)
+        protected virtual bool IsValidCommand(string path)
         {
             return Path.GetExtension(path).ToLowerInvariant().Equals(".exe") ||
                 Path.GetFileName(path).ToLowerInvariant().StartsWith(bamPrefix);
