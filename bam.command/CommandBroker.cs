@@ -1,5 +1,5 @@
-﻿using Bam.Net;
-using Bam.Net.Logging;
+﻿using Bam;
+using Bam.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
