@@ -2,7 +2,7 @@
 using Bam.Console;
 using Bam;
 using Bam.CoreServices;
-using Bam.Testing;
+using Bam.Test;
 using System;
 using System.Collections.Generic;
 using System.Linq;
