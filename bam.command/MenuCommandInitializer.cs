@@ -61,8 +61,7 @@ namespace Bam.Command
 
                 if(menuItem.Attribute != null)
                 {
-                    ConsoleCommandAttribute? attr = menuItem.Attribute as ConsoleCommandAttribute;
-                    if(attr != null)
+                    if(menuItem.Attribute is ConsoleCommandAttribute attr)
                     {
                         if (!string.IsNullOrEmpty(attr.OptionName) && !menuItem.DisplayName.Equals(attr.OptionName))
                         {
