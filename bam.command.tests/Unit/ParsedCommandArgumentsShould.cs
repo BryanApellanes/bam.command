@@ -17,11 +17,6 @@ namespace Bam
         {
         }
 
-        public override ServiceRegistry Configure(ServiceRegistry serviceRegistry)
-        {
-            return serviceRegistry;
-        }
-
         [UnitTest]
         public void SetContextAndCommand()
         {
