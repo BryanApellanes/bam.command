@@ -30,13 +30,7 @@ namespace Bam.Command
 
         public static BamCommandContext Current { get; private set; }
 
-        public ICommandBroker CommandBroker
-        {
-            get
-            {
-                return ServiceRegistry.Get<ICommandBroker>();
-            }
-        }
+        public ICommandBroker CommandBroker => ServiceRegistry.Get<ICommandBroker>();
 
         public static async void Main(string[] args)
         {
