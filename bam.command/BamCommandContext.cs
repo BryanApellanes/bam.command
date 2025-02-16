@@ -1,13 +1,8 @@
 ﻿using Bam.Console;
-using Bam;
 using Bam.Configuration;
-using Bam.CoreServices;
+using Bam.DependencyInjection;
 using Bam.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Bam.Services;
 
 namespace Bam.Command
 {

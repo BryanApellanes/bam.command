@@ -1,10 +1,6 @@
 ﻿using Bam.Console;
-using Bam.CoreServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Bam.DependencyInjection;
+using Bam.Services;
 
 namespace Bam.Command.Tests.TestClasses
 {
