@@ -1,4 +1,4 @@
-﻿using Bam.Command;
+using Bam.Command;
 using Bam.DependencyInjection;
 using Bam.Test;
 using Bam.Services;
@@ -16,10 +16,19 @@ namespace Bam
         {
             string testContext = "TestContext_".RandomLetters(6);
             string testCommand = "TestCommand_".RandomLetters(8);
-            ParsedCommandArguments args = new ParsedCommandArguments(new string[] { testContext, testCommand });
 
-            args.ContextName.ShouldEqual(testContext, "ContextName was not properly set.");
-            args.CommandName.ShouldEqual(testCommand, "CommandName was not properly set.");
+            When.A<ParsedCommandArguments>("sets context and command",
+                new ParsedCommandArguments(new string[] { testContext, testCommand }),
+                (args) => args)
+            .TheTest
+            .ShouldPass(because =>
+            {
+                because.TheResult.IsNotNull()
+                    .As<ParsedCommandArguments>("ContextName equals expected", a => testContext.Equals(a?.ContextName))
+                    .As<ParsedCommandArguments>("CommandName equals expected", a => testCommand.Equals(a?.CommandName));
+            })
+            .SoBeHappy()
+            .UnlessItFailed();
         }
 
         [UnitTest]
@@ -30,14 +39,22 @@ namespace Bam
             string argOneValue = "argOneValue_".RandomLetters(16);
             string argTwoValue = "argTwoValue_".RandomLetters(12);
             string aRandomKey = "--".RandomLetters(5);
-            ParsedCommandArguments args = new ParsedCommandArguments(new string[] { testContext, testCommand, "--argOne", argOneValue, aRandomKey, argTwoValue });
-
             string testKey = aRandomKey.Substring(2);
-            args.Contains("argOne").ShouldBeTrue("argOne key missing");
-            args.Contains(testKey).ShouldBeTrue($"{aRandomKey} key missing");
 
-            args["argOne"].ShouldEqual(argOneValue);
-            args[testKey].ShouldEqual(argTwoValue);
+            When.A<ParsedCommandArguments>("removes argument prefix",
+                new ParsedCommandArguments(new string[] { testContext, testCommand, "--argOne", argOneValue, aRandomKey, argTwoValue }),
+                (args) => args)
+            .TheTest
+            .ShouldPass(because =>
+            {
+                because.TheResult.IsNotNull()
+                    .As<ParsedCommandArguments>("contains argOne key", a => a?.Contains("argOne") == true)
+                    .As<ParsedCommandArguments>($"contains {aRandomKey} key", a => a?.Contains(testKey) == true)
+                    .As<ParsedCommandArguments>("argOne value equals expected", a => argOneValue.Equals(a?["argOne"]))
+                    .As<ParsedCommandArguments>($"{testKey} value equals expected", a => argTwoValue.Equals(a?[testKey]));
+            })
+            .SoBeHappy()
+            .UnlessItFailed();
         }
 
         [UnitTest]
@@ -49,12 +66,20 @@ namespace Bam
             string argOneValue = 12.RandomLetters();
             string argTwoKey = "--".RandomLetters(8);
             string argTwoValue = 6.RandomLetters();
-
-            ParsedCommandArguments args = new ParsedCommandArguments(new string[] { testContext, testCommand, argOneKey, argOneValue, argTwoKey, argTwoValue });
-
             string testKey = argOneKey.Substring(1);
-            args.Contains(testKey).ShouldBeTrue("test argument key was not present");
-            args[testKey].ShouldEqual(argOneValue);
+
+            When.A<ParsedCommandArguments>("removes short argument prefix",
+                new ParsedCommandArguments(new string[] { testContext, testCommand, argOneKey, argOneValue, argTwoKey, argTwoValue }),
+                (args) => args)
+            .TheTest
+            .ShouldPass(because =>
+            {
+                because.TheResult.IsNotNull()
+                    .As<ParsedCommandArguments>("contains test key", a => a?.Contains(testKey) == true)
+                    .As<ParsedCommandArguments>("value equals expected", a => argOneValue.Equals(a?[testKey]));
+            })
+            .SoBeHappy()
+            .UnlessItFailed();
         }
     }
 }
