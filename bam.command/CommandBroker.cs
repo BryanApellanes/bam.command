@@ -2,8 +2,18 @@
 
 namespace Bam.Command
 {
+    /// <summary>
+    /// Abstract base class for command brokers that resolve command contexts from arguments,
+    /// execute commands within those contexts, and raise lifecycle events throughout the process.
+    /// </summary>
     public abstract class CommandBroker : Loggable, ICommandBroker
     {
+        /// <summary>
+        /// Initializes a new instance of <see cref="CommandBroker"/> with the specified context resolver and optional logger.
+        /// Immediately loads command contexts from the resolver during construction.
+        /// </summary>
+        /// <param name="commandContextResolver">The resolver used to load and resolve command contexts.</param>
+        /// <param name="logger">An optional logger; defaults to <see cref="Log.Default"/> if not specified.</param>
         public CommandBroker(IBrokeredCommandContextResolver commandContextResolver, ILogger? logger = null)
         {
             this.CommandContextResolver = commandContextResolver;
@@ -11,33 +21,80 @@ namespace Bam.Command
             this.Initialize();
         }
 
+        /// <summary>
+        /// Gets the context resolver used to load and resolve command contexts from arguments.
+        /// </summary>
         protected IBrokeredCommandContextResolver CommandContextResolver { get; private set; }
 
-        public virtual IDictionary<string, IBrokeredCommandContext> CommandContexts 
+        /// <summary>
+        /// Gets the dictionary of available command contexts, keyed by context name.
+        /// </summary>
+        public virtual IDictionary<string, IBrokeredCommandContext> CommandContexts
         {
-            get; 
-            private set; 
+            get;
+            private set;
         }
 
+        /// <summary>
+        /// Gets the logger used by this command broker.
+        /// </summary>
         public ILogger Logger
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Raised when command context initialization begins.
+        /// </summary>
         public event EventHandler<CommandBrokerEventArgs> InitializeStarted;
 
+        /// <summary>
+        /// Raised when command context initialization completes successfully.
+        /// </summary>
         public event EventHandler<CommandBrokerEventArgs> InitializeCompleted;
+
+        /// <summary>
+        /// Raised when command context initialization fails with an exception.
+        /// </summary>
         public event EventHandler<CommandBrokerEventArgs> InitializeFailed;
-        
+
+        /// <summary>
+        /// Raised when context resolution begins.
+        /// </summary>
         public event EventHandler<CommandBrokerEventArgs> ResolveContextStarted;
+
+        /// <summary>
+        /// Raised when context resolution completes successfully.
+        /// </summary>
         public event EventHandler<CommandBrokerEventArgs> ResolveContextCompleted;
+
+        /// <summary>
+        /// Raised when context resolution fails with an exception.
+        /// </summary>
         public event EventHandler<CommandBrokerEventArgs> ResolveContextFailed;
 
+        /// <summary>
+        /// Raised when command brokering begins.
+        /// </summary>
         public event EventHandler<CommandBrokerEventArgs> BrokerCommandStarted;
+
+        /// <summary>
+        /// Raised when command brokering completes successfully.
+        /// </summary>
         public event EventHandler<CommandBrokerEventArgs> BrokerCommandCompleted;
+
+        /// <summary>
+        /// Raised when command brokering fails with an exception.
+        /// </summary>
         public event EventHandler<CommandBrokerEventArgs> BrokerCommandFailed;
 
+        /// <summary>
+        /// Resolves the appropriate command context from the arguments and executes the command,
+        /// returning the result. Returns <see cref="BrokeredCommand.Empty"/> on failure.
+        /// </summary>
+        /// <param name="arguments">The command-line arguments used to resolve and execute the command.</param>
+        /// <returns>An <see cref="IBrokeredCommandResult"/> containing the execution outcome.</returns>
         public IBrokeredCommandResult BrokerCommand(string[] arguments)
         {
             try
@@ -98,6 +155,12 @@ namespace Bam.Command
             return null;
         }
 
+        /// <summary>
+        /// Resolves the command context for the given arguments by using the context resolver to determine
+        /// the context name and looking it up in the loaded contexts.
+        /// </summary>
+        /// <param name="arguments">The command-line arguments to resolve the context from.</param>
+        /// <returns>The resolved <see cref="IBrokeredCommandContext"/>.</returns>
         public virtual IBrokeredCommandContext ResolveContext(string[] arguments)
         {
             Info("Resolving context: arguments='{0}'", string.Join(" ", arguments));
