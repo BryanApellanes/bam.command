@@ -17,7 +17,7 @@ namespace Bam.Command
         public CommandBroker(IBrokeredCommandContextResolver commandContextResolver, ILogger? logger = null)
         {
             this.CommandContextResolver = commandContextResolver;
-            this.Logger = logger ?? Log.Default;
+            this.Logger = logger ?? Log.Default!;
             this.Initialize();
         }
 
@@ -33,7 +33,7 @@ namespace Bam.Command
         {
             get;
             private set;
-        }
+        } = null!;
 
         /// <summary>
         /// Gets the logger used by this command broker.
@@ -42,52 +42,52 @@ namespace Bam.Command
         {
             get;
             private set;
-        }
+        } = null!;
 
         /// <summary>
         /// Raised when command context initialization begins.
         /// </summary>
-        public event EventHandler<CommandBrokerEventArgs> InitializeStarted;
+        public event EventHandler<CommandBrokerEventArgs>? InitializeStarted;
 
         /// <summary>
         /// Raised when command context initialization completes successfully.
         /// </summary>
-        public event EventHandler<CommandBrokerEventArgs> InitializeCompleted;
+        public event EventHandler<CommandBrokerEventArgs>? InitializeCompleted;
 
         /// <summary>
         /// Raised when command context initialization fails with an exception.
         /// </summary>
-        public event EventHandler<CommandBrokerEventArgs> InitializeFailed;
+        public event EventHandler<CommandBrokerEventArgs>? InitializeFailed;
 
         /// <summary>
         /// Raised when context resolution begins.
         /// </summary>
-        public event EventHandler<CommandBrokerEventArgs> ResolveContextStarted;
+        public event EventHandler<CommandBrokerEventArgs>? ResolveContextStarted;
 
         /// <summary>
         /// Raised when context resolution completes successfully.
         /// </summary>
-        public event EventHandler<CommandBrokerEventArgs> ResolveContextCompleted;
+        public event EventHandler<CommandBrokerEventArgs>? ResolveContextCompleted;
 
         /// <summary>
         /// Raised when context resolution fails with an exception.
         /// </summary>
-        public event EventHandler<CommandBrokerEventArgs> ResolveContextFailed;
+        public event EventHandler<CommandBrokerEventArgs>? ResolveContextFailed;
 
         /// <summary>
         /// Raised when command brokering begins.
         /// </summary>
-        public event EventHandler<CommandBrokerEventArgs> BrokerCommandStarted;
+        public event EventHandler<CommandBrokerEventArgs>? BrokerCommandStarted;
 
         /// <summary>
         /// Raised when command brokering completes successfully.
         /// </summary>
-        public event EventHandler<CommandBrokerEventArgs> BrokerCommandCompleted;
+        public event EventHandler<CommandBrokerEventArgs>? BrokerCommandCompleted;
 
         /// <summary>
         /// Raised when command brokering fails with an exception.
         /// </summary>
-        public event EventHandler<CommandBrokerEventArgs> BrokerCommandFailed;
+        public event EventHandler<CommandBrokerEventArgs>? BrokerCommandFailed;
 
         /// <summary>
         /// Resolves the appropriate command context from the arguments and executes the command,

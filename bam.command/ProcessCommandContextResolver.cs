@@ -25,11 +25,11 @@
         /// <summary>
         /// Gets or sets the directories to search for executables in.
         /// </summary>
-        public DirectoryInfo[] SearchDirectories 
-        { 
-            get; 
-            set; 
-        }
+        public DirectoryInfo[] SearchDirectories
+        {
+            get;
+            set;
+        } = null!;
 
         /// <summary>
         /// Gets or sets the filter function used to determine whether a file path represents a valid command.

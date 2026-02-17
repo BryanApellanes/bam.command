@@ -22,7 +22,7 @@
         /// <summary>
         /// Gets the name of this context, which is always "DEFAULT".
         /// </summary>
-        public string ContextName
+        public new string ContextName
         {
             get
             {

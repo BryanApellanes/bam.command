@@ -12,7 +12,7 @@
         {
             get;
             set;
-        }
+        } = null!;
 
         /// <summary>
         /// Gets or sets a value indicating whether the command executed successfully.
@@ -39,7 +39,7 @@
         {
             get;
             set;
-        }
+        } = null!;
 
         /// <summary>
         /// Gets or sets the arguments that were passed to the command.
@@ -48,7 +48,7 @@
         {
             get;
             set;
-        }
+        } = null!;
 
     }
 }

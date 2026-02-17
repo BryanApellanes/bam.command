@@ -19,7 +19,7 @@
         /// <summary>
         /// Gets the return value produced by the command execution.
         /// </summary>
-        object Result { get; }
+        object? Result { get; }
 
         /// <summary>
         /// Gets the name of the command that was executed.

@@ -37,7 +37,7 @@ namespace Bam.Command
         /// <summary>
         /// Gets the singleton instance of the current <see cref="BamCommandContext"/>.
         /// </summary>
-        public static BamCommandContext Current { get; private set; }
+        public new static BamCommandContext Current { get; private set; }
 
         /// <summary>
         /// Gets the command broker resolved from the service registry.
@@ -56,7 +56,7 @@ namespace Bam.Command
             int exitCode = 0;
             if (!command.Success)
             {
-                Message.PrintLine(command.RunResult.Message, ConsoleColor.Magenta);
+                Message.PrintLine(command.RunResult!.Message, ConsoleColor.Magenta);
                 exitCode = 1;
             }
 

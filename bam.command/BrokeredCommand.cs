@@ -21,7 +21,7 @@
             this.RunResult = executionResult;
         }
 
-        static IBrokeredCommandResult _empty;
+        static IBrokeredCommandResult _empty = null!;
         static object _emptyLock = new object();
         /// <summary>
         /// Gets a thread-safe singleton empty result with all null properties, used as a fallback when no command result is available.
@@ -30,7 +30,7 @@
         {
             get
             {
-                return _emptyLock.DoubleCheckLock(ref _empty, () => new BrokeredCommand(null, null, null, null));
+                return _emptyLock.DoubleCheckLock(ref _empty, () => new BrokeredCommand(null!, null!, null, null));
             }
         }
 

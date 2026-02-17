@@ -97,7 +97,7 @@ namespace Bam.Command
             int index = 0;
             foreach(ParameterInfo parameter in parameters)
             {
-                FileInfo file = this.GetFile(parameter, parameter.Name);
+                FileInfo file = this.GetFile(parameter, parameter.Name!);
                 results[index] = this.DeserializeFileContent(file, parameter.ParameterType);
 
                 index++;

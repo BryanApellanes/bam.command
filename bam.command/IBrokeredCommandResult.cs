@@ -19,7 +19,7 @@
         /// <summary>
         /// Gets the command that was executed.
         /// </summary>
-        Bam.IBrokeredCommand Command { get; }
+        Bam.IBrokeredCommand? Command { get; }
 
         /// <summary>
         /// Gets a value indicating whether the command executed successfully.
@@ -29,6 +29,6 @@
         /// <summary>
         /// Gets the detailed run result of the command execution.
         /// </summary>
-        IBrokeredCommandRunResult RunResult { get; }
+        IBrokeredCommandRunResult? RunResult { get; }
     }
 }

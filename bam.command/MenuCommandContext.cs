@@ -31,16 +31,16 @@ namespace Bam.Command
             this.CommandRunner = commandRunner;
         }
 
-        protected IMenu Menu 
+        protected IMenu Menu
         {
-            get; 
-            private set; 
-        }
+            get;
+            private set;
+        } = null!;
 
-        protected IMenuManager MenuManager 
+        protected IMenuManager MenuManager
         {
-            get; 
-            set; 
-        }
+            get;
+            set;
+        } = null!;
     }
 }
