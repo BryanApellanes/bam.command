@@ -46,21 +46,40 @@ namespace Bam.Command
 
         /// <summary>
         /// Entry point that brokers command-line arguments, executes the resolved command,
-        /// and exits with an appropriate exit code.
+        /// and exits with an appropriate exit code. Synchronous by design: brokering is synchronous,
+        /// and an async entry here would let broker failures escape unobserved.
         /// </summary>
         /// <param name="args">The command-line arguments.</param>
-        public static async void Main(string[] args)
+        public static void Main(string[] args)
         {
             ICommandBroker broker = Current.ServiceRegistry.Get<ICommandBroker>();
             IBrokeredCommandResult command = broker.BrokerCommand(args);
             int exitCode = 0;
             if (!command.Success)
             {
-                Message.PrintLine(command.RunResult!.Message, ConsoleColor.Magenta);
+                Message.PrintLine(GetFailureMessage(command, args), ConsoleColor.Magenta);
                 exitCode = 1;
             }
 
             BamConsoleContext.Exit(exitCode);
+        }
+
+        /// <summary>
+        /// Gets the message describing a failed brokered command, falling back to a diagnostic
+        /// naming the arguments when the result carries no run result (e.g. the context or command
+        /// did not resolve).
+        /// </summary>
+        /// <param name="command">The failed brokered command result.</param>
+        /// <param name="args">The command-line arguments that were brokered.</param>
+        /// <returns>A non-empty message describing the failure.</returns>
+        public static string GetFailureMessage(IBrokeredCommandResult command, string[] args)
+        {
+            string? message = command?.RunResult?.Message;
+            if (!string.IsNullOrEmpty(message))
+            {
+                return message;
+            }
+            return string.Format("Command failed: context or command not resolved (args: {0})", string.Join(" ", args ?? new string[] { }));
         }
 
         /// <summary>
